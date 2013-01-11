@@ -812,6 +812,11 @@ static const cairo_compositor_t base_compositor = {
     base_compositor_stroke,
     base_compositor_fill,
     base_compositor_glyphs,
+    NULL,	/* init_for_paint  */
+    NULL,	/* init_for_mask   */
+    NULL,	/* init_for_stroke */
+    NULL,	/* init_for_fill   */
+    NULL	/* init_for_glyphs */
 };
 
 cairo_surface_t *

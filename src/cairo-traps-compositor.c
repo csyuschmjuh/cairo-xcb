@@ -2334,4 +2334,9 @@ _cairo_traps_compositor_init (cairo_traps_compositor_t *compositor,
     compositor->base.fill = _cairo_traps_compositor_fill;
     compositor->base.stroke = _cairo_traps_compositor_stroke;
     compositor->base.glyphs = _cairo_traps_compositor_glyphs;
+    compositor->base.init_for_paint    = NULL;
+    compositor->base.init_for_mask     = NULL;
+    compositor->base.init_for_stroke   = NULL;
+    compositor->base.init_for_fill     = NULL;
+    compositor->base.init_for_glyphs   = NULL;
 }

@@ -182,4 +182,9 @@ const cairo_compositor_t _cairo_fallback_compositor = {
      _cairo_fallback_compositor_stroke,
      _cairo_fallback_compositor_fill,
      _cairo_fallback_compositor_glyphs,
+     NULL,	/* init_for_paint  */
+     NULL,	/* init_for_mask   */
+     NULL,	/* init_for_stroke */
+     NULL,	/* init_for_fill   */
+     NULL	/* init_for_glyphs */
 };

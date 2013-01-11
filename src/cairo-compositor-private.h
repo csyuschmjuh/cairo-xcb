@@ -86,6 +86,49 @@ struct cairo_compositor {
 				 cairo_glyph_t			*glyphs,
 				 int				 num_glyphs,
 				 cairo_bool_t			 overlap);
+    
+    cairo_warn cairo_int_status_t
+    (*init_for_paint)		(cairo_composite_rectangles_t	*extents,
+				 cairo_surface_t		*surface,
+				 cairo_operator_t		 op,
+				 const cairo_pattern_t		*source,
+				 const cairo_clip_t		*clip);
+    
+    cairo_warn cairo_int_status_t
+    (*init_for_mask)		(cairo_composite_rectangles_t	*extents,
+				 cairo_surface_t		*surface,
+				 cairo_operator_t		 op,
+				 const cairo_pattern_t		*source,
+				 const cairo_pattern_t		*mask,
+				 const cairo_clip_t		*clip);
+    
+    cairo_warn cairo_int_status_t
+    (*init_for_stroke)		(cairo_composite_rectangles_t	*extents,
+				 cairo_surface_t		*surface,
+				 cairo_operator_t		 op,
+				 const cairo_pattern_t		*source,
+				 const cairo_path_fixed_t	*path,
+				 const cairo_stroke_style_t	*style,
+				 const cairo_matrix_t		*ctm,
+				 const cairo_clip_t		*clip);
+
+    cairo_warn cairo_int_status_t
+    (*init_for_fill)		(cairo_composite_rectangles_t	*extents,
+				 cairo_surface_t		*surface,
+				 cairo_operator_t		 op,
+				 const cairo_pattern_t		*source,
+				 const cairo_path_fixed_t	*path,
+				 const cairo_clip_t		*clip);
+
+    cairo_warn cairo_int_status_t
+    (*init_for_glyphs)		(cairo_composite_rectangles_t	*extents,
+				 cairo_surface_t		*surface,
+				 cairo_operator_t		 op,
+				 const cairo_pattern_t		*source,
+				 cairo_glyph_t			*glyphs,
+				 int				 num_glyphs,
+				 cairo_scaled_font_t		*scaled_font,
+				 const cairo_clip_t		*clip);
 };
 
 struct cairo_mask_compositor {

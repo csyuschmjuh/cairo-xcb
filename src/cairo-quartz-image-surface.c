@@ -281,6 +281,11 @@ static const cairo_surface_backend_t cairo_quartz_image_surface_backend = {
     _cairo_quartz_image_surface_fill,
     NULL,  /* fill-stroke */
     _cairo_quartz_image_surface_glyphs,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
 };
 
 /**

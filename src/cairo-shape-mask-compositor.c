@@ -334,4 +334,9 @@ _cairo_shape_mask_compositor_init (cairo_compositor_t *compositor,
     compositor->fill   = _cairo_shape_mask_compositor_fill;
     compositor->stroke = _cairo_shape_mask_compositor_stroke;
     compositor->glyphs = _cairo_shape_mask_compositor_glyphs;
+    compositor->init_for_paint  = NULL;
+    compositor->init_for_mask   = NULL;
+    compositor->init_for_stroke = NULL;
+    compositor->init_for_fill   = NULL;
+    compositor->init_for_glyphs = NULL;
 }

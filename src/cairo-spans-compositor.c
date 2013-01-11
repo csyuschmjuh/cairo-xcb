@@ -1184,4 +1184,9 @@ _cairo_spans_compositor_init (cairo_spans_compositor_t *compositor,
     compositor->base.fill   = _cairo_spans_compositor_fill;
     compositor->base.stroke = _cairo_spans_compositor_stroke;
     compositor->base.glyphs = NULL;
+    compositor->base.init_for_paint   = NULL;
+    compositor->base.init_for_mask    = NULL;
+    compositor->base.init_for_stroke  = NULL;
+    compositor->base.init_for_fill    = NULL;
+    compositor->base.init_for_glyphs  = NULL;
 }

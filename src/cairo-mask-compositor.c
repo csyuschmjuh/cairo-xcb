@@ -1445,4 +1445,9 @@ _cairo_mask_compositor_init (cairo_mask_compositor_t *compositor,
     compositor->base.fill  = _cairo_mask_compositor_fill;
     compositor->base.stroke = _cairo_mask_compositor_stroke;
     compositor->base.glyphs = _cairo_mask_compositor_glyphs;
+    compositor->base.init_for_paint  = NULL;	/* init_for_paint  */
+    compositor->base.init_for_mask   = NULL;	/* init_for_mask   */
+    compositor->base.init_for_stroke = NULL;	/* init_for_stroke */
+    compositor->base.init_for_fill   = NULL;	/* init_for_fill   */
+    compositor->base.init_for_glyphs = NULL;	/* init_for_glyphs */
 }

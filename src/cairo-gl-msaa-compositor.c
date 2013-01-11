@@ -879,6 +879,11 @@ _cairo_gl_msaa_compositor_init (cairo_compositor_t	 *compositor,
     compositor->fill = _cairo_gl_msaa_compositor_fill;
     compositor->stroke = _cairo_gl_msaa_compositor_stroke;
     compositor->glyphs = _cairo_gl_msaa_compositor_glyphs;
+    compositor->init_for_paint  = NULL;
+    compositor->init_for_mask   = NULL;
+    compositor->init_for_stroke = NULL;
+    compositor->init_for_fill   = NULL;
+    compositor->init_for_glyphs = NULL;
 }
 
 const cairo_compositor_t *

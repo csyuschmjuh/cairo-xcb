@@ -190,6 +190,7 @@ _cairo_compositor_fill (const cairo_compositor_t	*compositor,
     cairo_int_status_t status;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
+    
     status = _cairo_composite_rectangles_init_for_fill (&extents, surface,
 							op, source, path,
 							clip);

@@ -2082,6 +2082,11 @@ static const cairo_compositor_t _cairo_quartz_cg_compositor = {
 #else
     NULL,
 #endif
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
 };
 
 static cairo_int_status_t

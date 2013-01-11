@@ -104,4 +104,9 @@ const cairo_compositor_t __cairo_no_compositor = {
     _cairo_no_compositor_stroke,
     _cairo_no_compositor_fill,
     _cairo_no_compositor_glyphs,
-};
+    NULL,	/* init_for_paint  */
+    NULL,	/* init_for_mask   */
+    NULL,	/* init_for_stroke */
+    NULL,	/* init_for_fill   */
+    NULL	/* init_for_glyphs */
+}; 

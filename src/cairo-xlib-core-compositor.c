@@ -603,6 +603,11 @@ _cairo_xlib_core_compositor_get (void)
 	compositor.fill  = _cairo_xlib_core_compositor_fill;
 	compositor.stroke = _cairo_xlib_core_compositor_stroke;
 	compositor.glyphs = NULL; /* XXX PolyGlyph? */
+	compositor.init_for_paint  = NULL;
+	compositor.init_for_mask   = NULL;
+	compositor.init_for_stroke = NULL;
+	compositor.init_for_fill   = NULL;
+	compositor.init_for_glyphs = NULL;
     }
 
     return &compositor;
