@@ -50,16 +50,21 @@ _cairo_compositor_paint (const cairo_compositor_t	*compositor,
 {
     cairo_composite_rectangles_t extents;
     cairo_int_status_t status;
+    cairo_bool_t default_init;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
-    if (compositor->init_for_paint)
+    if (compositor->init_for_paint) {
 	status = compositor->init_for_paint (&extents, surface,
 					     op, source, clip);
-    else
+       default_init = FALSE;
+    }
+    else {
 	status = _cairo_composite_rectangles_init_for_paint (&extents,
 							     surface,
 							     op, source,
 							     clip);
+	default_init = TRUE;
+    }
     if (unlikely (status))
 	return status;
 
@@ -68,6 +73,20 @@ _cairo_compositor_paint (const cairo_compositor_t	*compositor,
 	    compositor = compositor->delegate;
 
 	status = compositor->paint (compositor, &extents);
+
+ 	/* FIXME: this is inefficient if compositor->paint fails, we
+	 * just do a default initialization
+ 	 */
+ 	if (unlikely (status) && default_init == FALSE) {
+	    _cairo_composite_rectangles_fini (&extents);
+	    status = _cairo_composite_rectangles_init_for_paint (&extents,
+							     surface,
+							     op, source,
+							     clip);
+	    default_init = TRUE;
+ 	    if (unlikely (status))
+		return status;
+    	}
 
 	compositor = compositor->delegate;
     } while (status == CAIRO_INT_STATUS_UNSUPPORTED);
@@ -96,18 +115,23 @@ _cairo_compositor_mask (const cairo_compositor_t	*compositor,
 {
     cairo_composite_rectangles_t extents;
     cairo_int_status_t status;
+    cairo_bool_t default_init;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
-    if (compositor->init_for_mask)
+    if (compositor->init_for_mask) {
 	status = compositor->init_for_mask (&extents, surface,
 					    op,
 					    source, mask, clip);
-    else
+	default_init = FALSE;
+    }
+    else {
 	status = _cairo_composite_rectangles_init_for_mask (&extents,
 							    surface,
 							    op,
 							    source, mask,
 							    clip);
+	default_init = TRUE;
+    }
     if (unlikely (status))
 	return status;
 
@@ -116,7 +140,18 @@ _cairo_compositor_mask (const cairo_compositor_t	*compositor,
 	    compositor = compositor->delegate;
 
 	status = compositor->mask (compositor, &extents);
-
+	/* FIXME: same as fallbacks for paint */
+ 	if (unlikely (status) && default_init == FALSE) {
+	    _cairo_composite_rectangles_fini (&extents);
+	    status = _cairo_composite_rectangles_init_for_mask (&extents,
+							    surface,
+							    op,
+							    source, mask,
+							    clip);
+	    default_init = TRUE;
+	    if (unlikely (status))
+		return status;
+	}
 	compositor = compositor->delegate;
     } while (status == CAIRO_INT_STATUS_UNSUPPORTED);
 
@@ -149,23 +184,28 @@ _cairo_compositor_stroke (const cairo_compositor_t	*compositor,
 {
     cairo_composite_rectangles_t extents;
     cairo_int_status_t status;
+    cairo_bool_t default_init;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
 
     if (_cairo_pen_vertices_needed (tolerance, style->line_width/2, ctm) <= 1)
 	return CAIRO_INT_STATUS_NOTHING_TO_DO;
 
-    if (compositor->init_for_stroke)
+    if (compositor->init_for_stroke) {
 	status = compositor->init_for_stroke (&extents, surface,
 					      op, source,
 					      path, style, ctm,
 					      clip);
-    else
+	default_init = FALSE;
+    }
+    else {
 	status = _cairo_composite_rectangles_init_for_stroke (&extents,
 							      surface,
 							      op, source,
 							      path, style, 
 							      ctm, clip);
+	default_init = TRUE;
+    }
     if (unlikely (status))
 	return status;
 
@@ -176,7 +216,20 @@ _cairo_compositor_stroke (const cairo_compositor_t	*compositor,
 	status = compositor->stroke (compositor, &extents,
 				     path, style, ctm, ctm_inverse,
 				     tolerance, antialias);
-
+	/* FIXME: same as init_for_paint */
+	if (unlikely (status) && default_init == FALSE) {
+	    _cairo_composite_rectangles_fini (&extents);
+	
+	    status = _cairo_composite_rectangles_init_for_stroke (&extents,
+							      surface,
+							      op, source,
+							      path, style, 
+							      ctm, clip);
+	    default_init = TRUE;
+    
+	    if (unlikely (status))
+		return status;
+	}
 	compositor = compositor->delegate;
     } while (status == CAIRO_INT_STATUS_UNSUPPORTED);
 
@@ -207,19 +260,24 @@ _cairo_compositor_fill (const cairo_compositor_t	*compositor,
 {
     cairo_composite_rectangles_t extents;
     cairo_int_status_t status;
+    cairo_bool_t default_init;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
    
-    if (compositor->init_for_fill)
+    if (compositor->init_for_fill) {
     	status = compositor->init_for_fill (&extents, surface,
 					    op, source, path,
 					    clip);
-    else
+	default_init = FALSE;
+    }
+    else {
     	status = _cairo_composite_rectangles_init_for_fill (&extents,
 							    surface,
 							    op, source,
 							    path,
 							    clip);
+	default_init = TRUE;
+    }
     if (unlikely (status))
 	return status;
 
@@ -230,6 +288,18 @@ _cairo_compositor_fill (const cairo_compositor_t	*compositor,
 	status = compositor->fill (compositor, &extents,
 				   path, fill_rule, tolerance, antialias);
 
+	/* FIXME: same as fail in paint */
+	if (unlikely (status) && default_init == FALSE) {
+	    _cairo_composite_rectangles_fini (&extents);
+    	    status = _cairo_composite_rectangles_init_for_fill (&extents,
+							    surface,
+							    op, source,
+							    path,
+							    clip);
+	    default_init = TRUE;
+	    if (unlikely (status))
+		return status;
+	}
 	compositor = compositor->delegate;
     } while (status == CAIRO_INT_STATUS_UNSUPPORTED);
 
@@ -260,15 +330,18 @@ _cairo_compositor_glyphs (const cairo_compositor_t		*compositor,
     cairo_composite_rectangles_t extents;
     cairo_bool_t overlap;
     cairo_int_status_t status;
+    cairo_bool_t default_init;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
-    if (compositor->init_for_glyphs)
+    if (compositor->init_for_glyphs) {
 	status = compositor->init_for_glyphs (&extents, surface,
 					      op, source,
 					      scaled_font,
 					      glyphs, num_glyphs,
 					      clip, &overlap);
-    else
+	default_init = FALSE;
+    } 
+    else {
 	status = _cairo_composite_rectangles_init_for_glyphs (&extents, 
 							      surface,
 							      op, source,
@@ -277,6 +350,8 @@ _cairo_compositor_glyphs (const cairo_compositor_t		*compositor,
 							      num_glyphs,
 							      clip, 
 							      &overlap);
+	default_init = TRUE;
+    }
     if (unlikely (status))
 	return status;
 
@@ -286,6 +361,21 @@ _cairo_compositor_glyphs (const cairo_compositor_t		*compositor,
 
 	status = compositor->glyphs (compositor, &extents,
 				     scaled_font, glyphs, num_glyphs, overlap);
+	/* FIXME: same as fail for paint */
+	if (unlikely (status) && default_init == FALSE) {
+	    _cairo_composite_rectangles_fini (&extents);
+	    status = _cairo_composite_rectangles_init_for_glyphs (&extents, 
+							      surface,
+							      op, source,
+							      scaled_font,
+							      glyphs, 
+							      num_glyphs,
+							      clip, 
+							      &overlap);
+	    default_init = TRUE;
+	    if (unlikely (status))
+		return status;
+	}
 
 	compositor = compositor->delegate;
     } while (status == CAIRO_INT_STATUS_UNSUPPORTED);
