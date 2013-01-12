@@ -125,10 +125,11 @@ struct cairo_compositor {
 				 cairo_surface_t		*surface,
 				 cairo_operator_t		 op,
 				 const cairo_pattern_t		*source,
+				 cairo_scaled_font_t		*scaled_font,
 				 cairo_glyph_t			*glyphs,
 				 int				 num_glyphs,
-				 cairo_scaled_font_t		*scaled_font,
-				 const cairo_clip_t		*clip);
+				 const cairo_clip_t		*clip,
+				 cairo_bool_t			*overlap);
 };
 
 struct cairo_mask_compositor {

@@ -52,9 +52,14 @@ _cairo_compositor_paint (const cairo_compositor_t	*compositor,
     cairo_int_status_t status;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
-    status = _cairo_composite_rectangles_init_for_paint (&extents, surface,
-							 op, source,
-							 clip);
+    if (compositor->init_for_paint)
+	status = compositor->init_for_paint (&extents, surface,
+					     op, source, clip);
+    else
+	status = _cairo_composite_rectangles_init_for_paint (&extents,
+							     surface,
+							     op, source,
+							     clip);
     if (unlikely (status))
 	return status;
 
@@ -93,9 +98,16 @@ _cairo_compositor_mask (const cairo_compositor_t	*compositor,
     cairo_int_status_t status;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
-    status = _cairo_composite_rectangles_init_for_mask (&extents, surface,
-							op, source, mask,
-							clip);
+    if (compositor->init_for_mask)
+	status = compositor->init_for_mask (&extents, surface,
+					    op,
+					    source, mask, clip);
+    else
+	status = _cairo_composite_rectangles_init_for_mask (&extents,
+							    surface,
+							    op,
+							    source, mask,
+							    clip);
     if (unlikely (status))
 	return status;
 
@@ -143,10 +155,17 @@ _cairo_compositor_stroke (const cairo_compositor_t	*compositor,
     if (_cairo_pen_vertices_needed (tolerance, style->line_width/2, ctm) <= 1)
 	return CAIRO_INT_STATUS_NOTHING_TO_DO;
 
-    status = _cairo_composite_rectangles_init_for_stroke (&extents, surface,
-							  op, source,
-							  path, style, ctm,
-							  clip);
+    if (compositor->init_for_stroke)
+	status = compositor->init_for_stroke (&extents, surface,
+					      op, source,
+					      path, style, ctm,
+					      clip);
+    else
+	status = _cairo_composite_rectangles_init_for_stroke (&extents,
+							      surface,
+							      op, source,
+							      path, style, 
+							      ctm, clip);
     if (unlikely (status))
 	return status;
 
@@ -190,10 +209,17 @@ _cairo_compositor_fill (const cairo_compositor_t	*compositor,
     cairo_int_status_t status;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
-    
-    status = _cairo_composite_rectangles_init_for_fill (&extents, surface,
-							op, source, path,
-							clip);
+   
+    if (compositor->init_for_fill)
+    	status = compositor->init_for_fill (&extents, surface,
+					    op, source, path,
+					    clip);
+    else
+    	status = _cairo_composite_rectangles_init_for_fill (&extents,
+							    surface,
+							    op, source,
+							    path,
+							    clip);
     if (unlikely (status))
 	return status;
 
@@ -236,11 +262,21 @@ _cairo_compositor_glyphs (const cairo_compositor_t		*compositor,
     cairo_int_status_t status;
 
     TRACE ((stderr, "%s\n", __FUNCTION__));
-    status = _cairo_composite_rectangles_init_for_glyphs (&extents, surface,
-							  op, source,
-							  scaled_font,
-							  glyphs, num_glyphs,
-							  clip, &overlap);
+    if (compositor->init_for_glyphs)
+	status = compositor->init_for_glyphs (&extents, surface,
+					      op, source,
+					      scaled_font,
+					      glyphs, num_glyphs,
+					      clip, &overlap);
+    else
+	status = _cairo_composite_rectangles_init_for_glyphs (&extents, 
+							      surface,
+							      op, source,
+							      scaled_font,
+							      glyphs, 
+							      num_glyphs,
+							      clip, 
+							      &overlap);
     if (unlikely (status))
 	return status;
 
