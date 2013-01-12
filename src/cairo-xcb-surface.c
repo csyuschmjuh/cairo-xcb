@@ -226,6 +226,9 @@ _cairo_xcb_surface_finish (void *abstract_surface)
 
     _cairo_xcb_connection_destroy (surface->connection);
 
+    _cairo_clip_destroy (surface->clip);
+    _cairo_polygon_fini (&surface->clip_polygon);
+
     return status;
 }
 
@@ -1126,6 +1129,9 @@ _cairo_xcb_surface_create_internal (cairo_xcb_screen_t		*screen,
 
     surface->fallback = NULL;
     _cairo_boxes_init (&surface->fallback_damage);
+
+    surface->clip = NULL;
+    _cairo_polygon_init (&surface->clip_polygon, NULL, 0);
 
     return &surface->base;
 }

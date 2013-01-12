@@ -111,6 +111,9 @@ struct _cairo_xcb_surface {
     uint32_t precision;
 
     cairo_list_t link;
+
+    cairo_polygon_t clip_polygon;
+    cairo_clip_t   *clip;
 };
 
 struct _cairo_xcb_picture {
@@ -758,5 +761,13 @@ slim_hidden_proto (cairo_xcb_device_debug_get_precision);
 slim_hidden_proto_no_warn (cairo_xcb_device_debug_set_precision);
 slim_hidden_proto_no_warn (cairo_xcb_device_debug_cap_xrender_version);
 #endif
+
+#include <sys/time.h>
+static long get_tick ()
+{
+    struct timeval now;
+    gettimeofday (&now, NULL);
+    return now.tv_sec * 1000000 + now.tv_usec;
+}
 
 #endif /* CAIRO_XCB_PRIVATE_H */
